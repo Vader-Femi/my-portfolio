@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // 1. Generic UI Icons (Keep these from Lucide)
 import {
   Moon, Sun, Download, Smartphone, Database, Code, Layers,
@@ -17,7 +17,12 @@ import {
   Trophy, // Added Trophy icon
   Battery, // Added Battery icon
   BatteryCharging, // Added Battery Charging icon
-  MapPin // Added MapPin
+  MapPin, // Added MapPin
+  X, // Added X icon for closing modal
+  Activity,
+  Wifi,
+  Zap,
+  HardDrive
 } from 'lucide-react';
 
 // 2. Brand Logos (Import these from react-icons)
@@ -376,156 +381,141 @@ const EducationCards = ({ isDark }) => {
   );
 };
 
-// --- REPLACEMENT: BUG SMASHER MINI-GAME ---
+// --- REPLACEMENT: SYSTEM MONITOR (Teenage Engineering Style) ---
 
-const BugSmasher = ({ isDark }) => {
-  const [bugs, setBugs] = useState([]);
-  const [score, setScore] = useState(0);
-  const [gameActive, setGameActive] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30); // 30 second rounds
-  
-  // New State for Phone Status
+const SystemMonitor = ({ isDark }) => {
+  const [logs, setLogs] = useState([
+    "> init_portfolio_v2.0",
+    "> loading_modules...",
+    "> connecting_to_satellite...",
+    "> done."
+  ]);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   const [batteryLevel, setBatteryLevel] = useState(100);
-  const [isCharging, setIsCharging] = useState(false);
+  
+  // Random data for the "Graph"
+  const [activityBars, setActivityBars] = useState(Array(12).fill(50));
 
-  // Time Effect
+  // Time & Activity Loop
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      
+      // Randomize bars
+      setActivityBars(prev => prev.map(() => Math.floor(Math.random() * 100)));
+
+      // Add random log occasionally
+      if (Math.random() > 0.8) {
+        const tasks = [
+          "compiling_dart_code...", 
+          "training_neural_net...", 
+          "fetching_api_data...", 
+          "optimizing_assets...",
+          "deploying_to_prod...",
+          "garbage_collection_init..."
+        ];
+        const randomTask = tasks[Math.floor(Math.random() * tasks.length)];
+        setLogs(prev => [`> ${randomTask}`, ...prev.slice(0, 5)]);
+      }
+
     }, 1000);
     return () => clearInterval(timer);
   }, []);
 
   // Battery Effect
   useEffect(() => {
-    let battery = null;
-    
-    const updateBattery = () => {
-      setBatteryLevel(Math.round(battery.level * 100));
-      setIsCharging(battery.charging);
-    };
-
     if ('getBattery' in navigator) {
-      navigator.getBattery().then((b) => {
-        battery = b;
-        updateBattery();
-        battery.addEventListener('levelchange', updateBattery);
-        battery.addEventListener('chargingchange', updateBattery);
-      });
+      navigator.getBattery().then((b) => setBatteryLevel(Math.round(b.level * 100)));
     }
-
-    return () => {
-      if (battery) {
-        battery.removeEventListener('levelchange', updateBattery);
-        battery.removeEventListener('chargingchange', updateBattery);
-      }
-    };
   }, []);
 
-  // Game Loop
-  useEffect(() => {
-    let interval;
-    if (gameActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        // Spawn random bug
-        if (Math.random() > 0.3) { // 70% chance to spawn per tick
-          const newBug = {
-            id: Date.now(),
-            x: Math.random() * 80 + 10, // 10% to 90% width
-            y: Math.random() * 80 + 10, // 10% to 90% height
-            type: Math.random() > 0.8 ? 'critical' : 'minor' // 20% critical bugs
-          };
-          setBugs(prev => [...prev, newBug]);
-        }
-        setTimeLeft(prev => prev - 1);
-      }, 800); // Speed of spawning
-    } else if (timeLeft === 0) {
-      setGameActive(false);
-    }
-    return () => clearInterval(interval);
-  }, [gameActive, timeLeft]);
-
-  const smashBug = (id, type) => {
-    setBugs(prev => prev.filter(b => b.id !== id));
-    setScore(prev => prev + (type === 'critical' ? 5 : 1));
-  };
-
-  const startGame = () => {
-    setScore(0);
-    setBugs([]);
-    setTimeLeft(30);
-    setGameActive(true);
-  };
+  // TE Colors
+  const bgBase = isDark ? 'bg-zinc-900' : 'bg-gray-100';
+  const borderColor = isDark ? 'border-zinc-700' : 'border-gray-300';
+  const textColor = isDark ? 'text-zinc-300' : 'text-gray-700';
+  const accentColor = 'text-orange-500';
 
   return (
-    <div className={`relative w-full h-80 md:h-96 rounded-2xl border-4 overflow-hidden flex flex-col shadow-2xl transition-colors ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-gray-100 border-gray-300'}`}>
+    <div className={`relative w-full h-80 md:h-96 rounded-[2rem] border-4 ${borderColor} overflow-hidden flex flex-col shadow-2xl transition-colors ${bgBase}`}>
       
-      {/* Phone Status Bar Mock */}
-      <div className={`w-full px-4 py-2 flex justify-between items-center text-xs font-mono ${isDark ? 'bg-black text-white' : 'bg-white text-black'} border-b ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
-         <span>{currentTime}</span>
-         <div className="flex gap-1">
-           <span className="font-bold">BUG_SMASHER_v1.0</span>
+      {/* STATUS BAR */}
+      <div className={`w-full px-5 py-3 flex justify-between items-center text-[10px] font-mono tracking-widest uppercase border-b ${borderColor} ${textColor} bg-black/5`}>
+         <div className="flex items-center gap-2">
+           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+           <span>SYS_ONLINE</span>
          </div>
+         <span>{currentTime}</span>
          <div className="flex items-center gap-1">
            <span>{batteryLevel}%</span>
-           {isCharging ? <BatteryCharging size={14} /> : <Battery size={14} />}
+           <Battery size={12} />
          </div>
       </div>
 
-      {/* Game Area */}
-      <div className="relative flex-1 w-full overflow-hidden">
+      {/* MAIN DISPLAY */}
+      <div className="flex-1 p-4 flex flex-col gap-4 font-mono">
         
-        {/* Background Grid */}
-        <div className={`absolute inset-0 opacity-10 pointer-events-none`} 
-             style={{ backgroundImage: `linear-gradient(${isDark ? '#333' : '#ccc'} 1px, transparent 1px), linear-gradient(90deg, ${isDark ? '#333' : '#ccc'} 1px, transparent 1px)`, backgroundSize: '20px 20px' }}>
+        {/* Top Section: Activity Graph & Stats */}
+        <div className="flex gap-4 h-1/2">
+           {/* Graph */}
+           <div className={`flex-1 border ${borderColor} rounded-lg p-2 flex items-end gap-1 bg-black/10`}>
+              {activityBars.map((height, i) => (
+                <div 
+                  key={i} 
+                  className={`flex-1 rounded-sm transition-all duration-500 ${isDark ? 'bg-orange-500' : 'bg-orange-600'}`}
+                  style={{ height: `${height}%`, opacity: 0.5 + (height/200) }}
+                ></div>
+              ))}
+           </div>
+           
+           {/* Stats Grid */}
+           <div className="w-1/3 flex flex-col gap-2">
+              <div className={`flex-1 border ${borderColor} rounded-lg p-2 flex flex-col justify-center items-center`}>
+                 <span className="text-[9px] opacity-60 uppercase">CPU_LOAD</span>
+                 <span className={`text-lg font-bold ${accentColor}`}>{Math.floor(Math.random() * 30) + 20}%</span>
+              </div>
+              <div className={`flex-1 border ${borderColor} rounded-lg p-2 flex flex-col justify-center items-center`}>
+                 <span className="text-[9px] opacity-60 uppercase">RAM_USE</span>
+                 <span className={`text-lg font-bold ${textColor}`}>64%</span>
+              </div>
+           </div>
         </div>
 
-        {!gameActive ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 p-6 text-center">
-             <div className={`mb-4 p-4 rounded-full ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
-                <Bug size={48} className={isDark ? 'text-red-400' : 'text-red-600'} />
-             </div>
-             <h3 className="text-2xl font-bold mb-2">Debug Mode</h3>
-             <p className={`text-sm mb-6 max-w-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-               {timeLeft === 0 ? `Game Over! Final Score: ${score}` : "Developers spend 50% of their time debugging. Can you keep up?"}
-             </p>
-             <button 
-               onClick={startGame}
-               className="px-6 py-3 rounded-full font-bold bg-gradient-to-r from-red-500 to-orange-500 text-white hover:scale-105 transition-transform shadow-lg flex items-center gap-2"
-             >
-               {timeLeft === 0 ? <RefreshCcw size={18}/> : <Trophy size={18}/>}
-               {timeLeft === 0 ? "Try Again" : "Start Debugging"}
-             </button>
-          </div>
-        ) : (
-          // Active Game Elements
-          <>
-            {bugs.map(bug => (
-              <button
-                key={bug.id}
-                onClick={() => smashBug(bug.id, bug.type)}
-                style={{ top: `${bug.y}%`, left: `${bug.x}%` }}
-                className={`absolute p-2 rounded-full transform hover:scale-90 active:scale-75 transition-transform animate-bounce
-                  ${bug.type === 'critical' ? 'text-red-500 bg-red-100 shadow-red-500/50' : 'text-yellow-500 bg-yellow-100 shadow-yellow-500/50'} shadow-lg cursor-pointer`}
-              >
-                <Bug size={bug.type === 'critical' ? 32 : 24} strokeWidth={2.5} />
-              </button>
-            ))}
-          </>
-        )}
+        {/* Bottom Section: Terminal & Info */}
+        <div className="flex gap-4 h-1/2">
+           {/* Terminal */}
+           <div className={`w-2/3 border ${borderColor} rounded-lg p-3 overflow-hidden relative bg-black`}>
+              <div className="absolute top-0 left-0 w-full px-2 py-1 text-[9px] text-gray-500 border-b border-gray-800 bg-gray-900 uppercase">
+                Terminal_Output
+              </div>
+              <div className="mt-4 flex flex-col justify-end h-full">
+                {logs.map((log, i) => (
+                  <div key={i} className="text-xs text-green-400 font-mono truncate opacity-90">
+                    {log}
+                  </div>
+                ))}
+                <div className="text-xs text-green-400 animate-pulse">_</div>
+              </div>
+           </div>
+
+           {/* Controls mockup */}
+           <div className="w-1/3 flex flex-col gap-2">
+              <div className={`flex-1 border ${borderColor} rounded-lg flex items-center justify-center gap-2 ${isDark ? 'bg-zinc-800' : 'bg-gray-200'}`}>
+                 <Wifi size={16} className={isDark ? 'text-gray-500' : 'text-gray-400'} />
+                 <span className="text-[9px] uppercase">NET_OK</span>
+              </div>
+              <div className={`flex-1 border ${borderColor} rounded-lg flex items-center justify-center gap-2 ${isDark ? 'bg-zinc-800' : 'bg-gray-200'}`}>
+                 <HardDrive size={16} className={isDark ? 'text-gray-500' : 'text-gray-400'} />
+                 <span className="text-[9px] uppercase">DSK_OK</span>
+              </div>
+           </div>
+        </div>
+
       </div>
 
-      {/* Controls / Footer */}
-      <div className={`w-full px-6 py-3 flex justify-between items-center ${isDark ? 'bg-gray-800' : 'bg-white'} border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
-         <div className="flex flex-col">
-           <span className="text-xs uppercase tracking-wider opacity-60">Score</span>
-           <span className="text-2xl font-mono font-bold">{score}</span>
-         </div>
-         <div className="flex flex-col text-right">
-           <span className="text-xs uppercase tracking-wider opacity-60">Time</span>
-           <span className={`text-2xl font-mono font-bold ${timeLeft < 10 ? 'text-red-500 animate-pulse' : ''}`}>00:{timeLeft < 10 ? `0${timeLeft}` : timeLeft}</span>
-         </div>
+      {/* BOTTOM DECOR */}
+      <div className={`px-4 py-2 border-t ${borderColor} flex justify-between items-center text-[9px] uppercase tracking-widest opacity-50`}>
+         <span>ID: DEV-001</span>
+         <span>LOC: LAGOS</span>
       </div>
     </div>
   );
@@ -539,6 +529,30 @@ export default function Portfolio() {
 
   // Toggle Theme
   const toggleTheme = () => setIsDark(!isDark);
+
+  // Helper function to open apps in a small window (popup)
+  const openAppPreview = (url) => {
+    // Check if device is likely a desktop/laptop (width > 768px)
+    // const isDesktop = window.innerWidth >= 768;
+
+    // if (isDesktop) {
+    //   const width = 375;
+    //   const height = 812;
+    //   // Center the window
+    //   const left = (window.screen.width / 2) - (width / 2);
+    //   const top = (window.screen.height / 2) - (height / 2);
+      
+    //   window.open(
+    //     url,
+    //     'AppPreview',
+    //     `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no`
+    //   );
+    // } else {
+    //   // On mobile, standard new tab behavior is better
+    //   window.open(url, '_blank');
+    // }
+    window.open(url, '_blank');
+  };
 
   // Theme Classes
   const theme = {
@@ -638,11 +652,11 @@ export default function Portfolio() {
             </div>
           </div>
 
-          {/* Interactive Decor Element (Bug Smasher Game) */}
+          {/* Interactive Decor Element (System Monitor) */}
           <div className="relative hidden md:block">
-            <div className={`absolute -inset-1 rounded-3xl blur-xl opacity-30 ${isDark ? 'bg-gradient-to-r from-cyan-500 to-blue-600' : 'bg-gradient-to-r from-blue-300 to-purple-300'}`}></div>
-            {/* Replaced DataVizDemo with BugSmasher */}
-            <BugSmasher isDark={isDark} />
+            <div className={`absolute -inset-1 rounded-[2.5rem] blur-xl opacity-30 ${isDark ? 'bg-gradient-to-r from-cyan-500 to-blue-600' : 'bg-gradient-to-r from-blue-300 to-purple-300'}`}></div>
+            {/* Replaced DataVizDemo with SystemMonitor */}
+            <SystemMonitor isDark={isDark} />
           </div>
         </div>
       </section>
@@ -668,7 +682,7 @@ export default function Portfolio() {
 
       {/* NEW SECTION: Experiences (Moved Above Portfolio) */}
       <section className={`py-20 ${isDark ? 'bg-slate-800/50' : 'bg-slate-100'}`}>
-         <div className="max-w-6xl mx-auto px-4">
+         <div className="max-w-7xl mx-auto px-4">
              <h2 className="text-3xl font-bold mb-12 text-center flex items-center justify-center gap-3">
                <Briefcase size={32} className="text-blue-500" /> Experience
              </h2>
@@ -739,14 +753,12 @@ export default function Portfolio() {
                 <div className="grid grid-cols-2 gap-3">
                   {/* Replaced "Run App" with "Play Store" link */}
                   {app.playUrl && (
-                    <a
-                      href={app.playUrl}
-                      target="_blank"
-                      rel="noreferrer"
+                    <button
+                      onClick={() => openAppPreview(app.playUrl)}
                       className={`flex items-center justify-center py-2 rounded-lg font-medium text-sm transition-colors ${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'}`}
                     >
                       <FaGooglePlay size={16} className="mr-2" /> Run App
-                    </a>
+                    </button>
                   )}
                   {/* APK Link */}
                   <a
@@ -801,14 +813,12 @@ export default function Portfolio() {
                 <div className="grid grid-cols-2 gap-3">
                   {/* Replaced "Run App" with "Play Store" link */}
                   {app.playUrl && (
-                    <a
-                      href={app.playUrl}
-                      target="_blank"
-                      rel="noreferrer"
+                    <button
+                      onClick={() => openAppPreview(app.playUrl)}
                       className={`flex items-center justify-center py-2 rounded-lg font-medium text-sm transition-colors ${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'}`}
                     >
                       <FaGooglePlay size={16} className="mr-2" /> Run App
-                    </a>
+                    </button>
                   )}
                   {/* APK Link */}
                   <a
