@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 // 1. Generic UI Icons (Keep these from Lucide)
 import {
   Moon, Sun, Download, Smartphone, Database, Code, Layers,
@@ -16,7 +16,8 @@ import {
   RefreshCcw, // Added Reset icon
   Trophy, // Added Trophy icon
   Battery, // Added Battery icon
-  BatteryCharging // Added Battery Charging icon
+  BatteryCharging, // Added Battery Charging icon
+  MapPin // Added MapPin
 } from 'lucide-react';
 
 // 2. Brand Logos (Import these from react-icons)
@@ -126,26 +127,26 @@ const KotlinApps = [
     icon: "/assets/images/class-konnect.png",
     color: "bg-teal-500"
   },
-  {
-    id: 4,
-    title: "Bill Reminder",
-    description: "Reminder app that saves paid and unpaid bills in a local room database. Uses Alarm Manager for notifications.",
-    stack: ["Alarm Manager", "Room DB", "Material Design"],
-    apkUrl: "https://github.com/Vader-Femi/Bill-Reminder",
-    playUrl: "https://appetize.io/app/zamspmfniqj244yxgs2jpsdma4?device=pixel7&osVersion=13.0&scale=75",
-    icon: "/assets/images/bill-reminder.png",
-    color: "bg-green-600"
-  },
-  {
-    id: 5,
-    title: "2FA",
-    description: "Authentication app generating Time-Based One-Time-Passwords. Uses Jetpack Datastore and Base32 encryption.",
-    stack: ["Base32", "CI/CD", "Jetpack Datastore"],
-    apkUrl: "https://github.com/Vader-Femi/2FA",
-    playUrl: "https://appetize.io/app/kb3hfjs3s5g5nrehn4wwx5vlz4?device=pixel7&osVersion=13.0&scale=75",
-    icon: "/assets/images/2fa.png",
-    color: "bg-indigo-600"
-  }
+  // {
+  //   id: 4,
+  //   title: "Bill Reminder",
+  //   description: "Reminder app that saves paid and unpaid bills in a local room database. Uses Alarm Manager for notifications.",
+  //   stack: ["Alarm Manager", "Room DB", "Material Design"],
+  //   apkUrl: "https://github.com/Vader-Femi/Bill-Reminder",
+  //   playUrl: "https://appetize.io/app/zamspmfniqj244yxgs2jpsdma4?device=pixel7&osVersion=13.0&scale=75",
+  //   icon: "/assets/images/bill-reminder.png",
+  //   color: "bg-green-600"
+  // },
+  // {
+  //   id: 5,
+  //   title: "2FA",
+  //   description: "Authentication app generating Time-Based One-Time-Passwords. Uses Jetpack Datastore and Base32 encryption.",
+  //   stack: ["Base32", "CI/CD", "Jetpack Datastore"],
+  //   apkUrl: "https://github.com/Vader-Femi/2FA",
+  //   playUrl: "https://appetize.io/app/kb3hfjs3s5g5nrehn4wwx5vlz4?device=pixel7&osVersion=13.0&scale=75",
+  //   icon: "/assets/images/2fa.png",
+  //   color: "bg-indigo-600"
+  // }
 ];
 
 const DATA_PROJECTS = [
@@ -269,102 +270,108 @@ const EDUCATION = [
 
 // --- SUB-COMPONENTS ---
 
-const ExperienceSection = ({ isDark }) => {
-  const [activeId, setActiveId] = useState(0);
-  const activeExp = EXPERIENCES[activeId];
-
+// NEW: Experience Timeline (Replaces Tabs)
+const ExperienceTimeline = ({ isDark }) => {
   return (
-    <div className="grid md:grid-cols-12 gap-8">
-      {/* Left: Tabs */}
-      <div className="md:col-span-4 flex md:flex-col overflow-x-auto md:overflow-visible space-x-4 md:space-x-0 md:space-y-2 pb-4 md:pb-0">
-        {EXPERIENCES.map((exp, idx) => (
-           <button 
-             key={idx}
-             onClick={() => setActiveId(idx)}
-             className={`text-left px-4 py-3 border-l-4 transition-all whitespace-nowrap md:whitespace-normal rounded-r-lg ${
-               activeId === idx 
-                 ? (isDark ? 'border-cyan-400 bg-slate-800 text-cyan-400' : 'border-blue-600 bg-blue-50 text-blue-700') 
-                 : (isDark ? 'border-slate-700 hover:bg-slate-800 text-slate-400' : 'border-gray-200 hover:bg-gray-50 text-gray-500')
-             }`}
-           >
-             <span className="font-bold block text-sm">{exp.company}</span>
-           </button>
-        ))}
-      </div>
-      
-      {/* Right: Content */}
-      <div className="md:col-span-8">
-         <div className={`p-6 rounded-2xl border ${isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-gray-200 shadow-sm'}`}>
-            <h3 className="text-xl font-bold mb-1 flex items-center gap-2">
-              {activeExp.role} 
-              <span className={`text-xs px-2 py-0.5 rounded-full ${isDark ? 'bg-cyan-900/50 text-cyan-300' : 'bg-blue-100 text-blue-700'}`}>{activeExp.roleType}</span>
-            </h3>
-            <div className={`flex items-center gap-2 text-sm mb-6 ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>
-              <Calendar size={14} />
-              <span>{activeExp.duration}</span>
-            </div>
-            
+    <div className="relative border-l-2 border-gray-300 dark:border-gray-700 ml-4 md:ml-6 space-y-12">
+      {EXPERIENCES.map((exp, index) => (
+        <div key={index} className="relative pl-8 md:pl-12 group">
+          {/* Timeline Dot */}
+          <div className={`absolute -left-[9px] top-0 w-5 h-5 rounded-full border-4 transition-all duration-300
+            ${isDark ? 'bg-slate-900 border-blue-500 group-hover:bg-blue-500' : 'bg-white border-blue-600 group-hover:bg-blue-600'} 
+            group-hover:scale-125 z-10`}
+          ></div>
+          
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+             <div>
+               <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{exp.role}</h3>
+               <div className={`text-md font-medium ${isDark ? 'text-blue-400' : 'text-blue-600'} flex items-center mt-1`}>
+                 {exp.company} 
+                 <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${isDark ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                   {exp.roleType}
+                 </span>
+               </div>
+             </div>
+             <span className={`mt-2 sm:mt-0 text-xs font-mono px-3 py-1 rounded border self-start sm:self-center ${isDark ? 'border-slate-700 text-slate-400 bg-slate-800/50' : 'border-slate-200 text-slate-500 bg-slate-50'}`}>
+               {exp.duration}
+             </span>
+          </div>
+
+          <div className={`p-5 rounded-xl border transition-colors duration-300 ${isDark ? 'bg-slate-800/30 border-slate-700 hover:bg-slate-800/50' : 'bg-white border-gray-100 shadow-sm hover:shadow-md'}`}>
             <ul className="space-y-3">
-              {activeExp.highlights.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm leading-relaxed">
-                   <CheckCircle2 size={16} className={`mt-1 flex-shrink-0 ${isDark ? 'text-cyan-400' : 'text-blue-600'}`} />
-                   <span className={`${isDark ? 'text-slate-300' : 'text-gray-600'}`}>{item}</span>
+              {exp.highlights.map((highlight, hIndex) => (
+                <li key={hIndex} className={`flex items-start gap-3 text-sm leading-relaxed ${isDark ? 'text-slate-300' : 'text-gray-600'}`}>
+                  <CheckCircle2 size={16} className={`mt-1 flex-shrink-0 ${isDark ? 'text-blue-500/70' : 'text-blue-500'}`} />
+                  <span>{highlight}</span>
                 </li>
               ))}
             </ul>
-         </div>
-      </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
 
-const EducationSection = ({ isDark }) => {
-  const [activeId, setActiveId] = useState(0);
-  const activeEdu = EDUCATION[activeId];
-
+// NEW: Clean Tech Education Cards (Replaces Teenage Engineering)
+const EducationCards = ({ isDark }) => {
   return (
-    <div className="grid md:grid-cols-12 gap-8">
-      {/* Left: Tabs */}
-      <div className="md:col-span-4 flex md:flex-col overflow-x-auto md:overflow-visible space-x-4 md:space-x-0 md:space-y-2 pb-4 md:pb-0">
-        {EDUCATION.map((edu, idx) => (
-           <button 
-             key={idx}
-             onClick={() => setActiveId(idx)}
-             className={`text-left px-4 py-3 border-l-4 transition-all whitespace-nowrap md:whitespace-normal rounded-r-lg ${
-               activeId === idx 
-                 ? (isDark ? 'border-yellow-400 bg-slate-800 text-yellow-400' : 'border-amber-500 bg-amber-50 text-amber-700') 
-                 : (isDark ? 'border-slate-700 hover:bg-slate-800 text-slate-400' : 'border-gray-200 hover:bg-gray-50 text-gray-500')
-             }`}
-           >
-             <span className="font-bold block text-sm">{edu.school}</span>
-           </button>
-        ))}
-      </div>
-      
-      {/* Right: Content */}
-      <div className="md:col-span-8">
-         <div className={`p-6 rounded-2xl border ${isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-gray-200 shadow-sm'}`}>
-            <h3 className="text-xl font-bold mb-1">
-              {activeEdu.degree} 
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {EDUCATION.map((edu, index) => (
+        <div 
+          key={index} 
+          className={`relative p-6 rounded-2xl overflow-hidden border transition-all duration-300 group
+            ${isDark 
+              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700 hover:border-orange-500/50' 
+              : 'bg-gradient-to-br from-white to-slate-50 border-slate-200 hover:border-orange-400/50 hover:shadow-lg'
+            }`}
+        >
+          {/* Decoration Circle */}
+          <div className={`absolute -right-4 -top-4 w-24 h-24 rounded-full opacity-5 transition-all group-hover:scale-150
+            ${isDark ? 'bg-orange-500' : 'bg-orange-600'}`}></div>
+
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div className={`p-2 rounded-lg ${isDark ? 'bg-slate-700 text-orange-400' : 'bg-orange-50 text-orange-600'}`}>
+                <GraduationCap size={24} />
+              </div>
+              {edu.grade && (
+                <div className={`flex flex-col items-end`}>
+                  <span className="text-[10px] uppercase opacity-60 font-bold">Performance</span>
+                  <span className={`text-sm font-bold ${isDark ? 'text-orange-400' : 'text-orange-600'}`}>{edu.grade}</span>
+                </div>
+              )}
+            </div>
+
+            <h3 className={`text-lg font-bold mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              {edu.school}
             </h3>
-            {activeEdu.grade && (
-              <div className={`text-sm font-mono mb-2 ${isDark ? 'text-yellow-400' : 'text-amber-600'}`}>{activeEdu.grade}</div>
-            )}
-            <div className={`flex items-center gap-2 text-sm mb-6 ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>
-              <Calendar size={14} />
-              <span>{activeEdu.duration}</span>
+            <div className={`text-sm mb-4 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+              {edu.degree}
             </div>
-            
-            <h4 className="font-semibold text-sm mb-3 opacity-80 uppercase tracking-wider">Key Modules & Highlights</h4>
-            <div className="flex flex-wrap gap-2">
-              {activeEdu.highlights.map((item, i) => (
-                <span key={i} className={`px-3 py-1 rounded-full text-xs font-medium ${isDark ? 'bg-slate-700 text-slate-300' : 'bg-gray-100 text-gray-700'}`}>
-                   {item}
-                </span>
-              ))}
+
+            <div className={`flex items-center gap-2 text-xs mb-6 font-mono ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+              <Calendar size={12} />
+              <span>{edu.duration}</span>
             </div>
-         </div>
-      </div>
+
+            <div className={`pt-4 border-t ${isDark ? 'border-slate-700' : 'border-slate-100'}`}>
+              <div className="flex flex-wrap gap-2">
+                {edu.highlights.slice(0, 4).map((h, i) => (
+                   <span key={i} className={`text-[10px] px-2 py-1 rounded-md font-medium ${isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-600'}`}>
+                     {h}
+                   </span>
+                ))}
+                {edu.highlights.length > 4 && (
+                  <span className={`text-[10px] px-2 py-1 rounded-md font-medium ${isDark ? 'bg-slate-800 text-slate-500' : 'bg-slate-100 text-slate-400'}`}>
+                    +{edu.highlights.length - 4} more
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
@@ -659,6 +666,16 @@ export default function Portfolio() {
         </div>
       </section>
 
+      {/* NEW SECTION: Experiences (Moved Above Portfolio) */}
+      <section className={`py-20 ${isDark ? 'bg-slate-800/50' : 'bg-slate-100'}`}>
+         <div className="max-w-6xl mx-auto px-4">
+             <h2 className="text-3xl font-bold mb-12 text-center flex items-center justify-center gap-3">
+               <Briefcase size={32} className="text-blue-500" /> Experience
+             </h2>
+             <ExperienceTimeline isDark={isDark} />
+         </div>
+      </section>
+
       {/* Portfolio Section */}
       <section id="portfolio" className="py-24 max-w-7xl mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12">
@@ -842,23 +859,13 @@ export default function Portfolio() {
         </div>
       </section>
       
-      {/* NEW SECTION: Experiences */}
-      <section className={`py-20 ${isDark ? 'bg-slate-800/50' : 'bg-slate-100'}`}>
-         <div className="max-w-6xl mx-auto px-4">
-             <h2 className="text-3xl font-bold mb-12 text-center flex items-center justify-center gap-3">
-               <Briefcase size={32} className="text-blue-500" /> Experience
-             </h2>
-             <ExperienceSection isDark={isDark} />
-         </div>
-      </section>
-      
-      {/* NEW SECTION: Education */}
+      {/* NEW SECTION: Education (Clean Tech Style) */}
       <section className={`py-20 ${isDark ? 'bg-slate-900' : 'bg-white'}`}>
          <div className="max-w-6xl mx-auto px-4">
              <h2 className="text-3xl font-bold mb-12 text-center flex items-center justify-center gap-3">
                <GraduationCap size={32} className="text-amber-500" /> Education & Certifications
              </h2>
-             <EducationSection isDark={isDark} />
+             <EducationCards isDark={isDark} />
          </div>
       </section>
 
@@ -913,9 +920,6 @@ export default function Portfolio() {
           </div>
         </div>
       </footer>
-
-      {/* Overlay Components */}
-      {/* (Optional) Phone Emulator was removed in previous step but structure is maintained if needed */}
 
     </div>
   );
