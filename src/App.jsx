@@ -889,7 +889,7 @@ export default function Portfolio() {
             <div className="relative pl-8 md:pl-0">
               <div className="md:absolute md:-left-4 md:w-8 md:h-8 rounded-full bg-green-500 border-4 border-white dark:border-slate-900"></div>
               <div className="md:w-1/2 md:ml-auto md:pl-12">
-                <span className="text-sm font-mono text-green-500 mb-1 block">2020 - Android Native</span>
+                <span className="text-sm font-mono text-green-500 mb-1 block">From 2020 - Android Native</span>
                 <h3 className="text-xl font-bold mb-2">The Kotlin Foundation</h3>
                 <p className={`${theme.subText}`}>Started with native Android development. Mastered the lifecycle, intents, and clean architecture patterns using Kotlin.</p>
               </div>
@@ -898,7 +898,7 @@ export default function Portfolio() {
             <div className="relative pl-8 md:pl-0">
               <div className="md:absolute md:-left-4 md:w-8 md:h-8 rounded-full bg-blue-500 border-4 border-white dark:border-slate-900"></div>
               <div className="md:w-1/2 md:mr-auto md:pr-12 md:text-right">
-                <span className="text-sm font-mono text-blue-500 mb-1 block">2022 - Flutter</span>
+                <span className="text-sm font-mono text-blue-500 mb-1 block">From 2024 - Flutter</span>
                 <h3 className="text-xl font-bold mb-2">Cross-Platform Scalability</h3>
                 <p className={`${theme.subText}`}>Shifted to Flutter to build scalable, maintainable apps for both iOS and Android from a single codebase. Focused on UI aesthetics and performance.</p>
               </div>
@@ -907,7 +907,7 @@ export default function Portfolio() {
             <div className="relative pl-8 md:pl-0">
               <div className="md:absolute md:-left-4 md:w-8 md:h-8 rounded-full bg-purple-500 border-4 border-white dark:border-slate-900 animate-pulse"></div>
               <div className="md:w-1/2 md:ml-auto md:pl-12">
-                <span className="text-sm font-mono text-purple-500 mb-1 block">Present - Data Science</span>
+                <span className="text-sm font-mono text-purple-500 mb-1 block">From 2025 - Data Science</span>
                 <h3 className="text-xl font-bold mb-2">Intelligent Systems</h3>
                 <p className={`${theme.subText}`}>Integrating predictive models into mobile applications. Bridging the gap between frontend UX and backend intelligence.</p>
               </div>
