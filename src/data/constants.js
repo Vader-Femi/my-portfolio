@@ -4,7 +4,7 @@ export const FlutterApps = [
         title: "Petit",
         description: "A cross-platform compression application. It makes images smaller in size so they take up less space and send faster — without compromising quality. It works with different types of images like JPG, PNG, HEIF, and HEIC",
         stack: ["Flutter", "Dart", "Compression", "Flutter Super"],
-        apkUrl: "https://github.com/Vader-Femi/Petit",
+        apkUrl: "https://github.com/Vader-Femi/petit/releases",
         playUrl: "https://appetize.io/app/b_fgilfsz7geymqqlykl7zv2ejsi?device=pixel7&osVersion=13.0&toolbar=true",
         icon: "/assets/images/petit.png",
         color: "bg-orange-500"
@@ -14,7 +14,7 @@ export const FlutterApps = [
         title: "Habitar",
         description: "A habit-tracking app using Flutter, integrating Bloc and Flutter Super for robust state management. Applied clean architecture principles to ensure clear feature separation. Leveraged Firebase for authentication and remote data storage.",
         stack: ["Bloc", "Firebase", "Drift DB", "Clean Arch", "Notifications"],
-        apkUrl: "https://github.com/Vader-Femi/Habitar",
+        apkUrl: "https://github.com/Vader-Femi/Habitar/releases",
         playUrl: "https://appetize.io/app/b_nqcolhpm3blzmlb3eripogqzaa?device=pixel7&osVersion=13.0&toolbar=true",
         icon: "/assets/images/habitar.png",
         color: "bg-blue-500"
@@ -27,7 +27,7 @@ export const KotlinApps = [
         title: "Watchlist",
         description: "Android application leveraging TMDB API to offer access to over 2 million movies and TV series. Implements a visually pleasing UI using Jetpack Compose and Material 3 Design principles.",
         stack: ["Jetpack Compose", "TMDB API", "Retrofit", "Dagger-Hilt", "MVI"],
-        apkUrl: "https://github.com/Vader-Femi/Watchlist",
+        apkUrl: "https://github.com/Vader-Femi/Watchlist/releases",
         playUrl: "https://appetize.io/app/b_o7lwpntvmwbohd7yhp2wfde45e?device=pixel7&osVersion=13.0&scale=75",
         icon: "/assets/images/watchlist2.png",
         color: "bg-red-500"
@@ -47,7 +47,7 @@ export const KotlinApps = [
         title: "Class Konnect",
         description: "Android video call app made using Jitsi Meet SDK to improve E-Learning. Connects up to 75 participants synchronously.",
         stack: ["Jetpack Compose", "Jitsi Meet", "Firebase", "Dagger-Hilt"],
-        apkUrl: "https://github.com/Vader-Femi/Class-Konnect",
+        apkUrl: "https://github.com/Vader-Femi/Class-Konnect/releases",
         playUrl: "https://appetize.io/app/b_6v5uo3vwmfmtyj4edixui7prs4?device=pixel7&osVersion=13.0&scale=75",
         icon: "/assets/images/class-konnect.png",
         color: "bg-teal-500"
